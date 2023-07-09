@@ -116,21 +116,21 @@ class BrElement extends DomElement {
 function el(type, attrs, children) {
   switch (type) {
     case DIV:
-      return new DivElement(attrs, children).draw();
+      return new DivElement(attrs, children);
     case SPAN:
-      return new SpanElement(attrs, children).draw();
+      return new SpanElement(attrs, children);
     case UL:
-      return new UlElement(attrs, children).draw();
+      return new UlElement(attrs, children);
     case LI:
-      return new LiElement(attrs, children).draw();
+      return new LiElement(attrs, children);
     case FORM:
-      return new FormElement(attrs, children).draw();
+      return new FormElement(attrs, children);
     case LABEL:
-      return new LabelElement(attrs, children).draw();
+      return new LabelElement(attrs, children);
     case INPUT:
-      return new InputElement(attrs, children).draw();
+      return new InputElement(attrs, children);
     case BR:
-      return new BrElement(attrs, children).draw();
+      return new BrElement(attrs, children);
   }
 }
 
