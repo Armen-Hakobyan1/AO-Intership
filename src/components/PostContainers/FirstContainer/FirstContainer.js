@@ -19,14 +19,14 @@ export class FirstContainer extends Component {
     }));
   };
 
-  deleteButtonClick = (post) => {
+  deleteButtonClick = post => {
+    this.props.disableTruePost (post);
+    const updatedPosts = this.state.highestRatedPost.filter (
+      el => el && el.id !== post.id
+    );
 
-    this.props.disableTruePost(post);
-
-    const updatedPosts = this.state.highestRatedPost.filter((el) => el.id !== post.id);
-
-    this.setState({ highestRatedPost: updatedPosts });
-  }
+    this.setState ({highestRatedPost: updatedPosts});
+  };
 
   handleButtonClick = () => {
     let highestRate = 0;
@@ -40,13 +40,17 @@ export class FirstContainer extends Component {
       return [highestPost];
     }, []);
 
-    this.setState({ highestRatedPost: [...this.state.highestRatedPost, ...arr] });
-    this.props.disablePost(arr);
+    this.setState ({
+      highestRatedPost: [...this.state.highestRatedPost, ...arr],
+    });
+    this.props.disablePost (arr);
   };
 
   render () {
     const {highestRatedPost, reversePosts} = this.state;
-    const sortedPosts = reversePosts? [...highestRatedPost].reverse (): highestRatedPost;
+    const sortedPosts = reversePosts
+      ? [...highestRatedPost].reverse ()
+      : highestRatedPost;
     return (
       <div className="first-container">
         <Button
@@ -69,13 +73,17 @@ export class FirstContainer extends Component {
             (post, postIndex) =>
               post &&
               <div key={postIndex + '3'} className="post-delete-button">
-                <div key={postIndex +'1'} className="post-name">
+                <div key={postIndex + '1'} className="post-name">
                   {post.post}
-                  <div key={postIndex +'2'} className="post-item-rate">
+                  <div key={postIndex + '2'} className="post-item-rate">
                     <StarHalfIcon style={{color: 'yellow'}} />{post.rate / 2}
                   </div>
-                  <div  key={postIndex}>
-                    <IconButton onClick={() => this.deleteButtonClick(post)} aria-label="delete" size="small">
+                  <div key={postIndex}>
+                    <IconButton
+                      onClick={() => this.deleteButtonClick (post)}
+                      aria-label="delete"
+                      size="small"
+                    >
                       <DeleteIcon variant="outlined" color="error" />
                     </IconButton>
                   </div>

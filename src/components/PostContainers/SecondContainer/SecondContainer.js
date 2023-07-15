@@ -19,14 +19,15 @@ export class SecondContainer extends Component {
     }));
   };
 
-  deleteButtonClick = (post) => {
+  deleteButtonClick = post => {
+    this.props.disableTruePost (post);
 
-    this.props.disableTruePost(post);
+    const updatedPosts = this.state.highestRatedPost.filter (
+      el => el && el.id !== post.id
+    );
 
-    const updatedPosts = this.state.highestRatedPost.filter((el) => el.id !== post.id);
-
-    this.setState({ highestRatedPost: updatedPosts });
-  }
+    this.setState ({highestRatedPost: updatedPosts});
+  };
 
   handleButtonClick = () => {
     let highestRate = 0;
@@ -47,7 +48,9 @@ export class SecondContainer extends Component {
 
   render () {
     const {highestRatedPost, reversePosts} = this.state;
-    const sortedPosts = reversePosts?[...highestRatedPost].reverse (): highestRatedPost;
+    const sortedPosts = reversePosts
+      ? [...highestRatedPost].reverse ()
+      : highestRatedPost;
     return (
       <div className="second-container">
         <div className="second-buttons">
@@ -70,14 +73,18 @@ export class SecondContainer extends Component {
           {sortedPosts.map (
             (post, postIndex) =>
               post &&
-              <div className="post-delete-button">
-                <div key={postIndex} className="post-name">
+              <div key={postIndex} className="post-delete-button">
+                <div key={postIndex + '1'} className="post-name">
                   {post.post}
-                  <div key={postIndex +'1'} className="post-item-rate">
+                  <div key={postIndex + '2'} className="post-item-rate">
                     <StarHalfIcon style={{color: 'yellow'}} />{post.rate / 2}
                   </div>
-                  <div key={postIndex +'2'}>
-                    <IconButton onClick={() => this.deleteButtonClick(post)} aria-label="delete" size="small">
+                  <div key={postIndex + '3'}>
+                    <IconButton
+                      onClick={() => this.deleteButtonClick (post)}
+                      aria-label="delete"
+                      size="small"
+                    >
                       <DeleteIcon variant="outlined" color="error" />
                     </IconButton>
                   </div>

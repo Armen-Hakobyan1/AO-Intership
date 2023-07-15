@@ -1,6 +1,6 @@
 .first-container{
   width: 400px;
-  height: 300px;
+  height: 500px;
   border: 2px solid black;
   padding: 20px;
   border-radius: 5px;
@@ -25,7 +25,7 @@
 }
 .first-container:hover{
   width: 500px;
-  height: 300px;
+  height: 400px;
   transition: 1s;
 }
 
