@@ -1,17 +1,21 @@
 import React, {Component} from 'react';
-import './PoolList.css';
-import {Posts} from '../../constants/Pool';
+import {posts} from '../../constants/Pool';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import PersonIcon from '@mui/icons-material/Person';
 import Pagination from '@mui/material/Pagination';
-import Box from '@mui/material/Box';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
+import {Search, StyledInputBase} from '../../constants/MaterialUi';
+import './PoolList.css';
+import PostContainer from '../PostContainers/PostContainer';
 
 export class PoolList extends Component {
   constructor () {
     super ();
     this.state = {
-      posts: Posts,
+      posts: posts,
       currentPage: 1,
       postsPerPage: 3,
       searchQuery: '',
@@ -20,21 +24,21 @@ export class PoolList extends Component {
   }
 
   componentDidMount () {
-    this.RatesSum ();
+    this.calculateRate ();
     window.scrollTo ({top: 0, behavior: 'smooth'});
   }
 
-  RatesSum = () => {
-    this.setState (posts => {
-      const updatePostsRates = posts.posts.map (post => {
-        const commentRatesSum = post.comments.reduce (
+  calculateRate = () => {
+    this.setState (prevState => {
+      const updatedPosts = prevState.posts.map (post => {
+        const commentcalculateRate = post.comments.reduce (
           (total, comment) => total + comment.commentRate,
           0
         );
-        post.rate = commentRatesSum;
+        post.rate = commentcalculateRate;
         return post;
       });
-      return {posts: updatePostsRates};
+      return {posts: updatedPosts};
     });
   };
 
@@ -46,8 +50,74 @@ export class PoolList extends Component {
     this.setState ({searchQuery: event.target.value});
   };
 
+  handleAddComment = (event, postIndex) => {
+    if (event.key === 'Enter') {
+      const comment = event.target.value;
+
+      this.setState (prevState => {
+        const updatedPosts = [...prevState.posts];
+        const updatedPost = {...updatedPosts[postIndex]};
+        const updatedComments = [...updatedPost.comments];
+
+        updatedComments.push ({
+          comment: comment,
+          commentRate: 0,
+        });
+
+        updatedPost.comments = updatedComments;
+        updatedPosts[postIndex] = updatedPost;
+
+        return {posts: updatedPosts};
+      });
+
+      event.target.value = '';
+    }
+  };
+
+  handleAddRate = (event, postIndex, commentIndex) => {
+    const {posts} = this.state;
+
+    const updatedPosts = [...posts];
+    const updatedPost = {...updatedPosts[postIndex]};
+    const updatedComments = [...updatedPost.comments];
+    const updatedComment = {...updatedComments[commentIndex]};
+
+    updatedComment.commentRate += 1;
+    updatedComments[commentIndex] = updatedComment;
+    updatedPost.comments = updatedComments;
+
+    const newRate = updatedPost.comments.reduce (
+      (total, comment) => total + comment.commentRate,
+      0
+    );
+    updatedPost.rate = newRate;
+
+    updatedPosts[postIndex] = updatedPost;
+    this.setState ({
+      posts: updatedPosts,
+    });
+  };
+
+  disablePost = posts => {
+    posts.map (post => {
+      this.state.posts.forEach (el => {
+        if (post && el.id === post.id) {
+          return (el.disabled = true);
+        }
+      });
+    });
+  };
+
+  disableTruePost = post => {
+    this.state.posts.forEach (el => {
+      if (el.id === post.id) {
+        return (el.disabled = false);
+      }
+    });
+  };
+
   render () {
-    const {posts, searchQuery} = this.state;
+    const { posts, searchQuery } = this.state;
     const {currentPage, postsPerPage} = this.state;
     const filteredPosts = posts.filter (post =>
       post.comments.some (comment =>
@@ -71,6 +141,20 @@ export class PoolList extends Component {
     );
     return (
       <div>
+        <AppBar position="static">
+          <Toolbar>
+            <Search>
+              <SearchIcon />
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{'aria-label': 'search'}}
+                type="text"
+                value={this.state.searchQuery}
+                onChange={this.handleSearchChange}
+              />
+            </Search>
+          </Toolbar>
+        </AppBar>
         <div className="pool-list">
           {currentPosts.map ((post, postIndex) => {
             return (
@@ -88,12 +172,25 @@ export class PoolList extends Component {
                     <li key={commentIndex} className="comment-item">
                       <p>{comment.comment}</p>
                       <p className="post-star-icon">
-                        <StarBorderIcon style={{color: 'yellow'}} />
+                        <StarBorderIcon
+                          id={`comment-${postIndex}`}
+                          onClick={event =>
+                            this.handleAddRate (event, postIndex, commentIndex)}
+                          style={{color: 'yellow'}}
+                        />
                         {comment.commentRate}
                       </p>
                     </li>
                   ))}
                 </ul>
+                <TextField
+                  id={`comment-${postIndex}`}
+                  label="Add comment"
+                  variant="filled"
+                  sx={{marginLeft: '550px'}}
+                  onKeyDown={event => this.handleAddComment (event, postIndex)}
+                />
+                <hr style={{backgroundColor: 'black'}} />
               </ul>
             );
           })}
@@ -112,26 +209,11 @@ export class PoolList extends Component {
             onChange={this.handlePageChange}
           />
         </div>
-        <Box
-          sx={{
-            width: 500,
-            maxWidth: '100%',
-            margin: '40px',
-            marginLeft: '350px',
-            border: '1px solid black',
-            borderRadius: '10px',
-          }}
-        >
-          <TextField
-            style={{backgroundColor: 'rgb(90 91 93)'}}
-            fullWidth
-            label="Search..."
-            id="fullWidth"
-            type="text"
-            value={this.state.searchQuery}
-            onChange={this.handleSearchChange}
-          />
-        </Box>
+        <PostContainer
+          posts={posts}
+          disablePost={this.disablePost}
+          disableTruePost={this.disableTruePost}
+        />
       </div>
     );
   }

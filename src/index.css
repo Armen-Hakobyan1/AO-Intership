@@ -2,7 +2,7 @@ body {
   margin: 50px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgb(131, 132, 134);
   font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif
 }
 

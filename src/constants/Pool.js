@@ -1,4 +1,4 @@
-export const Posts = [
+export const posts = [
   {
     post: 'Post 1',
     rate: null,

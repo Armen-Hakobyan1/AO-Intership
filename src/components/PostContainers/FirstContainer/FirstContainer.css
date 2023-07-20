@@ -25,7 +25,6 @@
 }
 .first-container:hover{
   width: 500px;
-  height: 400px;
   transition: 1s;
 }
 

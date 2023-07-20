@@ -41,6 +41,8 @@
   background-color: rgb(0 132 255);
   color: aliceblue;
   min-width: 400px;
+  width: 660px;
+  transition:width  1s;
 }
 .post-rate {
   display: flex;
@@ -69,4 +71,8 @@
 .button-page{
   display: flex;
   justify-content: center;
+}
+.comment-item:hover{
+  width: 700px;
+  transition: 1s;
 }
