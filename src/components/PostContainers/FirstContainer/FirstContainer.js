@@ -1,38 +1,32 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {useState} from 'react';
 import './FirstContainer.css';
 
-export class FirstContainer extends Component {
-  constructor (props) {
-    super (props);
-    this.state = {
-      highestRatedPost: [],
-    };
-  }
+const FirstContainer = ({postsData, disablePost, disableTruePost}) => {
+  const [highestRatedPost, setHighestRatedPost] = useState ([]);
+  const [reversePosts, setReversePosts] = useState (false);
 
-  handleSortClick = () => {
-    this.setState (prevState => ({
-      reversePosts: !prevState.reversePosts,
-    }));
+  const handleSortClick = () => {
+    setReversePosts (!reversePosts);
   };
 
-  deleteButtonClick = post => {
-    this.props.disableTruePost (post);
-    const updatedPosts = this.state.highestRatedPost.filter (
+  const deleteButtonClick = post => {
+    disableTruePost (post);
+    const updatedPosts = highestRatedPost.filter (
       el => el && el.id !== post.id
     );
-
-    this.setState ({highestRatedPost: updatedPosts});
+    setHighestRatedPost (updatedPosts);
   };
 
-  handleButtonClick = () => {
+  const handleButtonClick = () => {
     let highestRate = 0;
     let highestPost = null;
 
-    const arr = this.props.posts.reduce ((acc, post) => {
+    const arr = postsData.reduce ((acc, post) => {
       if (post.rate > highestRate && !post.disabled) {
         highestRate = post.rate;
         highestPost = post;
@@ -40,60 +34,58 @@ export class FirstContainer extends Component {
       return [highestPost];
     }, []);
 
-    this.setState ({
-      highestRatedPost: [...this.state.highestRatedPost, ...arr],
-    });
-    this.props.disablePost (arr);
+    setHighestRatedPost ([...highestRatedPost, ...arr]);
+    disablePost (arr);
   };
 
-  render () {
-    const {highestRatedPost, reversePosts} = this.state;
-    const sortedPosts = reversePosts
-      ? [...highestRatedPost].reverse ()
-      : highestRatedPost;
-    return (
-      <div className="first-container">
-        <Button
-          onClick={this.handleSortClick}
-          variant="contained"
-          style={{margin: '11px'}}
-        >
-          sort
-        </Button>
-        <Button
-          onClick={this.handleButtonClick}
-          variant="contained"
-          style={{margin: '11px'}}
-        >
-          +
-        </Button>
+  const sortedPosts = reversePosts
+    ? [...highestRatedPost].reverse ()
+    : highestRatedPost;
 
-        <div>
-          {sortedPosts.map (
-            (post, postIndex) =>
-              post &&
-              <div key={postIndex + '3'} className="post-delete-button">
-                <div key={postIndex + '1'} className="post-name">
-                  {post.post}
-                  <div key={postIndex + '2'} className="post-item-rate">
-                    <StarHalfIcon style={{color: 'yellow'}} />{post.rate / 2}
-                  </div>
-                  <div key={postIndex}>
-                    <IconButton
-                      onClick={() => this.deleteButtonClick (post)}
-                      aria-label="delete"
-                      size="small"
-                    >
-                      <DeleteIcon variant="outlined" color="error" />
-                    </IconButton>
-                  </div>
+  return (
+    <div className="first-container">
+      <Button
+        onClick={handleSortClick}
+        variant="contained"
+        style={{margin: '11px'}}
+      >
+        sort
+      </Button>
+      <Button
+        onClick={handleButtonClick}
+        variant="contained"
+        style={{margin: '11px'}}
+      >
+        +
+      </Button>
+
+      <div>
+        {sortedPosts.map (
+          (post, postIndex) =>
+            post &&
+            <div key={postIndex + '3'} className="post-delete-button">
+              <div key={postIndex + '1'} className="post-name">
+                {post.post}
+                <div key={postIndex + '2'} className="post-item-rate">
+                  <StarHalfIcon style={{color: 'yellow'}} />
+                  {post.rate / 2}
+                </div>
+                <div key={postIndex}>
+                  <IconButton
+                    onClick={() => deleteButtonClick (post)}
+                    aria-label="delete"
+                    size="small"
+                  >
+                    <DeleteIcon variant="outlined" color="error" />
+                  </IconButton>
                 </div>
               </div>
-          )}
-        </div>
+            </div>
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default FirstContainer;
+

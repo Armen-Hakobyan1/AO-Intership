@@ -1,16 +1,14 @@
-import './App.css';
-import React, { Component } from 'react'
+import React from 'react'
 import PoolList from './components/Pool/PoolList';
+import './App.css';
 
-export class App extends Component {
-  render() {
-    return (
-      <div>
-        <PoolList />
-      </div>
-    )
-  }
+function App() {
+  return (
+    <div>
+      <PoolList />
+    </div>
+  );
 }
 
-export default App
+export default App;
 
